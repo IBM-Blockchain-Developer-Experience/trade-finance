@@ -1,0 +1,44 @@
+#!/usr/local/bin/expect -f
+
+set BASEDIR [file dirname $argv0]
+
+send [cd $BASEDIR/../../cli/sp-cli]
+
+set timeout 120
+spawn npm start
+match_max 100000
+
+expect  {
+    "*What is your username?*"                                  { send -- "3\r" }
+    timeout                                                     { puts "\rtimed out"; exit 1 }
+}
+
+expect  {
+    "*Which action do you want to do?*"                         { send -- "3\r" }
+    timeout                                                     { puts "\rtimed out"; exit 1 }
+}
+
+expect  {
+    "*What would you like to do?*"                              { send -- "1\r" }
+    timeout                                                     { puts "\rtimed out"; exit 1 }
+}
+
+expect  {
+    "*Which finance request do you want to manage?*REQ1*"       { send -- "1\r" }
+    timeout                                                     { puts "\rtimed out"; exit 1 }
+}
+
+expect  {
+    "*What would you like to do with the finance request?*"     { send -- "2\r" }
+    timeout                                                     { puts "\rtimed out"; exit 1 }
+}
+
+expect  {
+    "*REJECTED*REQ1*"                                           { }
+    timeout                                                     { puts "\rtimed out"; exit 1 }
+}
+
+expect  {
+    "*Which action do you want to do?*"                         { send -- "4\r" }
+    timeout                                                     { puts "\rtimed out"; exit 1 }
+}

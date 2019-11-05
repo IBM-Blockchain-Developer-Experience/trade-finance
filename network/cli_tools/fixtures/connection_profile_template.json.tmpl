@@ -1,0 +1,78 @@
+{
+    "name": "{{org.name}}_tradenet_profile",
+    "x-type": "hlfv1",
+    "description": "A generated network",
+    "version": "1.0",
+    "client": {
+        "organization": "{{org.name}}",
+        "connection": {
+            "timeout": {
+                "peer": {
+                    "endorser": "300",
+                    "eventHub": "300",
+                    "eventReg": "300"
+                },
+                "orderer": "300"
+            }
+        }
+    },
+    "organizations": {
+        "{{org.name}}": {
+            "mspid": "{{org.name}}MSP",
+            "peers": [
+                {{#peers}}
+                    "{{name}}"{{#unless @last}},{{/unless}}
+                {{/peers}}
+            ],
+            "certificateAuthorities": [
+                {{#cas}}
+                    "{{name}}"{{#unless @last}},{{/unless}}
+                {{/cas}}
+            ]
+        }
+    },
+    "orderers": {
+{{#orderers}}
+        "{{name}}": {
+            "url": "grpcs://{{url}}:{{port}}",
+            "tlsCACerts": {
+                "path": "{{../mspDir}}/ordererOrganizations/{{org.smallName}}.com/orderers/{{url}}/tls/ca.crt"
+            },
+            "grpcOptions": {
+                "hostnameOverride": "{{url}}",
+                "ssl-target-name-override": "{{url}}"
+            }
+        }{{#unless @last}},{{/unless}}
+{{/orderers}}
+    },
+    "peers": {
+{{#peers}}
+        "{{name}}": {
+            "url": "grpcs://{{url}}:{{port}}",
+            "eventUrl": "grpcs://{{url}}:{{eventPort}}",
+            "tlsCACerts": {
+                "path": "{{../mspDir}}/peerOrganizations/{{org.smallName}}.com/peers/{{name}}/tls/ca.crt"
+            },
+            "grpcOptions": {
+                "hostnameOverride": "{{name}}",
+                "ssl-target-name-override": "{{name}}",
+                "request-timeout": 120001
+            }
+        }{{#unless @last}},{{/unless}}
+{{/peers}}
+    },
+    "certificateAuthorities": {
+{{#cas}}
+        "{{name}}": {
+            "url": "https://{{url}}:{{port}}",
+            "caName": "ca-{{org.smallName}}",
+            "tlsOptions": {
+                "trustedRoots": ["{{../mspDir}}/peerOrganizations/{{../org.smallName}}.com/tlsca/{{url}}-cert.pem"]
+            },
+            "httpOptions": {
+                "verify": false
+            }
+        }{{#unless @last}},{{/unless}}
+{{/cas}}
+    }
+}

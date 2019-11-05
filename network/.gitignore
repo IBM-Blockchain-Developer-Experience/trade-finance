@@ -1,0 +1,15 @@
+/network/tradenet_fabric
+/network/crypto-material/crypto-config
+/network/crypto-material/core.yaml
+/wallets
+
+/cli_tools/dist/
+
+node_modules
+
+*.tx
+*.block
+
+.DS_Store
+env.json
+**/tmp

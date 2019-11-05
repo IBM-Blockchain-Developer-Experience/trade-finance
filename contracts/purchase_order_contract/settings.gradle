@@ -1,0 +1,10 @@
+rootProject.name = 'financecontract'
+
+include ':ledger-api'
+include ':assets'
+include ':common'
+
+project(':ledger-api').projectDir = new File('modules/ledger-api')
+project(':assets').projectDir = new File('modules/assets')
+project(':common').projectDir = new File('modules/common')
+

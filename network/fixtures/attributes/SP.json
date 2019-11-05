@@ -1,0 +1,22 @@
+[
+    {
+        "name": "tradenet.PurchaseOrder.READ",
+        "value": "y",
+        "ecert": true
+    },
+    {
+        "name": "tradenet.PurchaseOrder.UPDATE",
+        "value": "y",
+        "ecert": true
+    },
+    {
+        "name": "tradenet.FinanceRequest.READ",
+        "value": "y",
+        "ecert": true
+    },
+    {
+        "name": "tradenet.FinanceRequest.UPDATE",
+        "value": "y",
+        "ecert": true
+    }
+]

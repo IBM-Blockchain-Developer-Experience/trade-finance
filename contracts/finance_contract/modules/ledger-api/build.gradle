@@ -1,0 +1,74 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ */
+plugins {
+    id 'maven-publish'
+    id 'java'
+}
+
+version '0.0.1'
+group = 'org.tradefinance'
+sourceCompatibility = 1.8
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven {
+        url "https://nexus.hyperledger.org/content/repositories/snapshots/"
+    }
+    maven {
+        url 'https://jitpack.io'
+    }
+}
+
+dependencies {
+    compile group: 'org.hyperledger.fabric-chaincode-java', name: 'fabric-chaincode-shim', version: '1.4.4-SNAPSHOT'
+    compile group: 'org.parboiled', name: 'parboiled-java', version: '1.1.8'
+    compile group: 'org.json', name: 'json', version: '20180813'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.4.2'
+    testImplementation 'org.assertj:assertj-core:3.11.1'
+    testImplementation 'org.mockito:mockito-core:2.+'
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+
+tasks.withType(JavaCompile) {
+  options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation" << "-parameters"
+}
+
+task cleanFiles(type: Delete) {
+  delete 'bin/main', 'bin/test'
+}
+
+task copySource(type: Copy) {
+  from 'build/classes/java/main'
+  from 'build/resources/main'
+  into 'bin/main'
+}
+
+task copyTest(type: Copy) {
+  from 'build/classes/java/test'
+  from 'build/resources/test'
+  into 'bin/test'
+}
+
+
+task runAfterBuild(type: Copy) {
+  dependsOn 'copySource'
+  dependsOn 'copyTest'
+}
+
+build.finalizedBy(runAfterBuild)
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from(components.java)
+        }
+    }
+}

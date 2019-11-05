@@ -1,0 +1,73 @@
+#!/usr/local/bin/expect -f
+
+set BASEDIR [file dirname $argv0]
+
+send [cd $BASEDIR/../../cli/sp-cli]
+
+set timeout 120
+spawn npm start
+match_max 100000
+
+expect {
+    "*What is your username?*"                                  { send -- "4\r" }
+    timeout                                                     { puts "\rtimed out"; exit 1 }
+}
+
+expect {
+    "*Which action do you want to do?*"                         { send -- "3\r" }
+    timeout                                                     { puts "\rtimed out"; exit 1 }
+}
+
+expect {
+    "*What would you like to do?*"                              { send -- "1\r" }
+    timeout                                                     { puts "\rtimed out"; exit 1 }
+}
+
+expect {
+    "*Which finance request do you want to manage?*REQ2*"       { send -- "1\r" }
+    timeout                                                     { puts "\rtimed out"; exit 1 }
+}
+
+expect {
+    "*What would you like to do with the finance request?*"     { send -- "1\r" }
+    timeout                                                     { puts "\rtimed out"; exit 1 }
+}
+
+expect {
+    "*What is the buyers bank identification?*"                 { send -- "alice@DigiBankPO\r" }
+    timeout                                                     { puts "\rtimed out"; exit 1 }
+}
+
+expect {
+    "*What is the buyers GLN?*"                                 { send -- "1000000000000\r" }
+    timeout                                                     { puts "\rtimed out"; exit 1 }
+}
+expect {
+    "*What is the GLN of the content owner?*"                   { send -- "40023412345680\r" }
+    timeout                                                     { puts "\rtimed out"; exit 1 }
+}
+
+expect {
+    "*How much is each unit?*"                                  { send -- "1\r" }
+    timeout                                                     { puts "\rtimed out"; exit 1 }
+}
+
+expect {
+    "*How many units?*"                                         { send -- "10000\r" }
+    timeout                                                     { puts "\rtimed out"; exit 1 }
+}
+
+expect {
+    "*What is the GTIN of the order*"                           { send -- "109876543\r" }
+    timeout                                                     { puts "\rtimed out"; exit 1 }
+}
+
+expect {
+    "*APPROVED*REQ2*"                                           { }
+    timeout                                                     { puts "\rtimed out"; exit 1 }
+}
+
+expect {
+    "*Which action do you want to do?*"                         { send -- "4\r" }
+    timeout                                                     { puts "\rtimed out"; exit 1 }
+}

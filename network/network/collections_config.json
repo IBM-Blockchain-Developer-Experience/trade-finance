@@ -1,0 +1,50 @@
+[
+     {
+          "name": "DigiBankPO",
+          "policy": "OR('DigiBankPOMSP.member')",
+          "requiredPeerCount": 0,
+          "maxPeerCount": 1,
+          "blockToLive": 0,
+          "memberOnlyRead": true
+     },
+     {
+          "name": "MagnetoCorpPO",
+          "policy": "OR('MagnetoCorpPOMSP.member')",
+          "requiredPeerCount": 0,
+          "maxPeerCount": 1,
+          "blockToLive": 0,
+          "memberOnlyRead": true
+     },
+     {
+          "name": "DigiBankSP",
+          "policy": "OR('DigiBankPOMSP.member')",
+          "requiredPeerCount": 0,
+          "maxPeerCount": 1,
+          "blockToLive": 0,
+          "memberOnlyRead": true
+     },
+     {
+          "name": "MagnetoCorpSP",
+          "policy": "OR('MagnetoCorpPOMSP.member','MagnetoCorpSPMSP.member')",
+          "requiredPeerCount": 0,
+          "maxPeerCount": 1,
+          "blockToLive": 0,
+          "memberOnlyRead": true
+     },
+     {
+          "name": "HedgematicSP",
+          "policy": "OR('MagnetoCorpPOMSP.member', 'DigiBankPOMSP.member', 'HedgematicPOMSP.member', 'HedgematicSPMSP.member')",
+          "requiredPeerCount": 0,
+          "maxPeerCount": 1,
+          "blockToLive": 0,
+          "memberOnlyRead": true
+     },
+     {
+          "name": "EcoBankSP",
+          "policy": "OR('MagnetoCorpPOMSP.member', 'DigiBankPOMSP.member', 'HedgematicPOMSP.member', 'EcoBankSPMSP.member')",
+          "requiredPeerCount": 0,
+          "maxPeerCount": 1,
+          "blockToLive": 0,
+          "memberOnlyRead": true
+     }
+]

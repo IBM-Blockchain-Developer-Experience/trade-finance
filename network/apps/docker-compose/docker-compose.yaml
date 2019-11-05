@@ -1,0 +1,100 @@
+version: '2'
+
+services:
+  api.digi-bank-po.com:
+    extends:
+      file: docker-compose-base.yaml
+      service: ep_rest_server
+    container_name: api.digi-bank-po.com
+    environment:
+      - FABRIC_ORGANISATION=DigiBankPO
+      - PREFERRED_PEER=peer0.digi-bank-po.com
+    volumes:
+      - '../../network/tradenet_fabric/DigiBankPO_connection.json:/etc/tradefinance/connection_profile.json'
+      - '../../wallets/DigiBankPO:/etc/tradefinance/wallet'
+    ports:
+      - "6000:6000"
+
+  api.magneto-corp-po.com:
+    extends:
+      file: docker-compose-base.yaml
+      service: ep_rest_server
+    container_name: api.magneto-corp-po.com
+    environment:
+      - FABRIC_ORGANISATION=MagnetoCorpPO
+      - PREFERRED_PEER=peer0.magneto-corp-po.com
+    volumes:
+      - '../../network/tradenet_fabric/MagnetoCorpPO_connection.json:/etc/tradefinance/connection_profile.json'
+      - '../../wallets/MagnetoCorpPO:/etc/tradefinance/wallet'
+    ports:
+      - "6001:6000"
+
+  api.hedgematic-po.com:
+    extends:
+      file: docker-compose-base.yaml
+      service: ep_rest_server
+    container_name: api.hedgematic-po.com
+    environment:
+      - FABRIC_ORGANISATION=HedgematicPO
+      - PREFERRED_PEER=peer0.hedgematic-po.com
+    volumes:
+      - '../../network/tradenet_fabric/HedgematicPO_connection.json:/etc/tradefinance/connection_profile.json'
+      - '../../wallets/HedgematicPO:/etc/tradefinance/wallet'
+    ports:
+      - "6002:6000"
+
+  api.digi-bank-sp.com:
+    extends:
+      file: docker-compose-base.yaml
+      service: sp_rest_server
+    container_name: api.digi-bank-sp.com
+    environment:
+      - FABRIC_ORGANISATION=DigiBankSP
+      - PREFERRED_PEER=peer0.digi-bank-sp.com
+    volumes:
+      - '../../network/tradenet_fabric/DigiBankSP_connection.json:/etc/tradefinance/connection_profile.json'
+      - '../../wallets/DigiBankSP:/etc/tradefinance/wallet'
+    ports:
+      - "7000:7000"
+
+  api.magneto-corp-sp.com:
+    extends:
+      file: docker-compose-base.yaml
+      service: sp_rest_server
+    container_name: api.magneto-corp-sp.com
+    environment:
+      - FABRIC_ORGANISATION=MagnetoCorpSP
+      - PREFERRED_PEER=peer0.magneto-corp-sp.com
+    volumes:
+      - '../../network/tradenet_fabric/MagnetoCorpSP_connection.json:/etc/tradefinance/connection_profile.json'
+      - '../../wallets/MagnetoCorpSP:/etc/tradefinance/wallet'
+    ports:
+      - "7001:7000"
+
+  api.hedgematic-sp.com:
+    extends:
+      file: docker-compose-base.yaml
+      service: sp_rest_server
+    container_name: api.hedgematic-sp.com
+    environment:
+      - FABRIC_ORGANISATION=HedgematicSP
+      - PREFERRED_PEER=peer0.hedgematic-po.com
+    volumes:
+      - '../../network/tradenet_fabric/HedgematicSP_connection.json:/etc/tradefinance/connection_profile.json'
+      - '../../wallets/HedgematicSP:/etc/tradefinance/wallet'
+    ports:
+      - "7002:7000"
+
+  api.eco-bank-sp.com:
+    extends:
+      file: docker-compose-base.yaml
+      service: sp_rest_server
+    container_name: api.eco-bank-sp.com
+    environment:
+      - FABRIC_ORGANISATION=EcoBankSP
+      - PREFERRED_PEER=peer0.magneto-corp-po.com
+    volumes:
+      - '../../network/tradenet_fabric/EcoBankSP_connection.json:/etc/tradefinance/connection_profile.json'
+      - '../../wallets/EcoBankSP:/etc/tradefinance/wallet'
+    ports:
+      - "7003:7000"

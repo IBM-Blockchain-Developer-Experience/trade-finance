@@ -1,0 +1,59 @@
+#!/usr/local/bin/expect -f
+
+set BASEDIR [file dirname $argv0]
+
+send [cd $BASEDIR/../../cli/po-cli]
+
+set timeout 120
+spawn npm start
+match_max 100000
+
+expect {
+    "*What is your username?*"                                  { send -- "2\r" }
+    timeout                                                     { puts "\rtimed out"; exit 1 }
+}
+
+expect {
+    "*Which action do you want to do?*"                         { send -- "1\r" }
+    timeout                                                     { puts "\rtimed out"; exit 1 }
+}
+
+expect {
+    "*What would you like to create?*"                          { send -- "2\r" }
+    timeout                                                     { puts "\rtimed out"; exit 1 }
+}
+
+expect {
+    "*Who are you requesting finance from?*"                    { send -- "a\r" }
+    timeout                                                     { puts "\rtimed out"; exit 1 }
+}
+
+expect {
+    "*Which purchase order would you like finance for?*PO0"     { send -- "1\r" }
+    timeout                                                     { puts "\rtimed out"; exit 1 }
+}
+
+expect {
+    "*How much finance would you like?*"                        { send -- "7500\r" }
+    timeout                                                     { puts "\rtimed out"; exit 1 }
+}
+
+expect {
+    "*What is your desired interest rate?*"                     { send -- "1.05\r" }
+    timeout                                                     { puts "\rtimed out"; exit 1 }
+}
+
+expect {
+    "*How long do you want to pay the finance back over?*"      { send -- "24\r" }
+    timeout                                                     { puts "\rtimed out"; exit 1 }
+}
+
+expect {
+    "*REQ0*REQ1*REQ2*"                                          { }
+    timeout                                                     { puts "\rtimed out"; exit 1 }
+}
+
+expect {
+    "*Which action do you want to do?*"                         { send -- "4\r" }
+    timeout                                                     { puts "\rtimed out"; exit 1 }
+}
