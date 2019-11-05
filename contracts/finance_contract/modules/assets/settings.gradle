@@ -1,0 +1,11 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ */
+rootProject.name = 'assets'
+
+boolean isIncludedBuild = gradle.parent != null
+
+if (!isIncludedBuild) {
+    include ':ledger-api'
+    project(':ledger-api').projectDir = new File('../ledger-api')
+}

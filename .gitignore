@@ -1,0 +1,16 @@
+bin
+build
+node_modules
+.gradle
+**/dist
+
+# NETWORK
+/network/network/tradenet_fabric
+/network/network/crypto-material/crypto-config
+/network/network/crypto-material/core.yaml
+/network/wallets
+
+/network/cli_tools/dist/
+
+.DS_Store
+env.json

@@ -1,0 +1,19 @@
+version: '2'
+
+services:
+  clinopeer:
+    container_name: cli
+    image: hyperledger/fabric-tools${FABRIC_IMG_TAG}
+    tty: true
+    environment:
+      - GOPATH=/opt/gopath
+      - FABRIC_CFG_PATH=/etc/hyperledger/config
+
+      # LOGGING SETTINGS
+      - FABRIC_LOGGING_SPEC=${FABRIC_DEBUG}
+
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: /bin/bash
+    volumes:
+      - /var/run/:/host/var/run/
+      - ../crypto-material:/etc/hyperledger/config/

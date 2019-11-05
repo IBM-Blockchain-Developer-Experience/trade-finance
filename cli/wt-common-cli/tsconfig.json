@@ -1,0 +1,21 @@
+{
+	"compilerOptions": {
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"target": "es6",
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"rootDir": "./src",
+		"outDir": "dist",
+		"lib": [ "es2016" ],
+		"sourceMap": true,
+        "resolveJsonModule": true,
+        "declaration": true
+	},
+	"exclude": [
+		"node_modules"
+    ],
+    "include": [
+        "src/**/*"
+    ]
+}

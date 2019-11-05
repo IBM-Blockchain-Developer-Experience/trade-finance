@@ -1,0 +1,68 @@
+{
+    "name": "~~ORGANISATION~~_tradenet_profile",
+    "x-type": "hlfv1",
+    "description": "A generated network",
+    "version": "1.0",
+    "client": {
+        "organization": "~~ORGANISATION~~",
+        "connection": {
+            "timeout": {
+                "peer": {
+                    "endorser": "300",
+                    "eventHub": "300",
+                    "eventReg": "300"
+                },
+                "orderer": "300"
+            }
+        }
+    },
+    "organizations": {
+        "~~ORGANISATION~~": {
+            "mspid": "~~ORGANISATION~~MSP",
+            "peers": [
+                "~~PEER_URL~~"
+            ],
+            "certificateAuthorities": [
+                "~~CA_URL~~"
+            ]
+        }
+    },
+    "orderers": {
+        "orderer.example.com": {
+            "url": "grpcs://orderer.example.com:~~ORDERER_PORT~~",
+            "tlsCACerts": {
+                "path": "~~MSP_DIR~~/ordererOrganizations/example.com/orderers/orderer.example.com/tls/ca.crt"
+            },
+            "grpcOptions": {
+                "hostnameOverride": "orderer.example.com",
+                "ssl-target-name-override": "orderer.example.com"
+            }
+        }
+    },
+    "peers": {
+        "~~PEER_URL~~": {
+            "url": "grpcs://~~FORMATTED_PEER_URL~~:~~PEER_PORT~~",
+            "eventUrl": "grpcs://~~FORMATTED_PEER_URL~~:~~PEER_EVENT_PORT~~",
+            "tlsCACerts": {
+                "path": "~~MSP_DIR~~/peerOrganizations/~~SMALL_NAME~~.com/peers/~~PEER_URL~~/tls/ca.crt"
+            },
+            "grpcOptions": {
+                "hostnameOverride": "~~PEER_URL~~",
+                "ssl-target-name-override": "~~PEER_URL~~",
+                "request-timeout": 120001
+            }
+        }
+    },
+    "certificateAuthorities": {
+        "~~CA_URL~~": {
+            "url": "https://~~FORMATTED_CA_URL~~:~~CA_PORT~~",
+            "caName": "ca-~~SMALL_NAME~~",
+            "tlsOptions": {
+                "trustedRoots": ["~~MSP_DIR~~/peerOrganizations/~~SMALL_NAME~~.com/tlsca/~~CA_URL~~-cert.pem"]
+            },
+            "httpOptions": {
+                "verify": false
+            }
+        }
+    }
+}

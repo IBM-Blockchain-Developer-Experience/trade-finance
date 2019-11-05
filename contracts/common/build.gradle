@@ -1,0 +1,99 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+}
+
+version '0.0.1'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven {
+        url "https://nexus.hyperledger.org/content/repositories/snapshots/"
+    }
+    maven {
+        url 'https://jitpack.io'
+    }
+}
+
+dependencies {
+    compile group: 'org.hyperledger.fabric-chaincode-java', name: 'fabric-chaincode-shim', version: '1.4.4-SNAPSHOT'
+
+    implementation project(':ledger-api')
+
+    compile group: 'org.json', name: 'json', version: '20180813'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.4.2'
+    testImplementation 'org.assertj:assertj-core:3.11.1'
+    testImplementation 'org.mockito:mockito-core:2.+'
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+        showStandardStreams = true
+    }
+}
+
+jacoco {
+    toolVersion = "0.7.9"
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination file("${buildDir}/jacocoHtml")
+    }
+}
+
+jacocoTestCoverageVerification {
+    afterEvaluate {
+        classDirectories = files(classDirectories.files.collect {
+            fileTree(dir: it, exclude:  [
+                    'org/tradefinance/contracts/utils/**',
+            ])
+        })
+    }
+
+    violationRules {
+        rule {
+            limit {
+                minimum = 1.00
+            }
+        }
+    }
+}
+
+test.finalizedBy(jacocoTestReport)
+test.finalizedBy(jacocoTestCoverageVerification)
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation" << "-parameters"
+}
+
+task cleanFiles(type: Delete) {
+  delete 'bin/main', 'bin/test'
+}
+
+task copySource(type: Copy) {
+  from 'build/classes/java/main'
+  from 'build/resources/main'
+  into 'bin/main'
+}
+
+task copyTest(type: Copy) {
+  from 'build/classes/java/test'
+  from 'build/resources/test'
+  into 'bin/test'
+}
+
+
+task runAfterBuild(type: Copy) {
+  dependsOn 'copySource'
+  dependsOn 'copyTest'
+}
+
+build.finalizedBy(runAfterBuild)

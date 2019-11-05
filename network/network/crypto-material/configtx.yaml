@@ -1,0 +1,406 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+---
+################################################################################
+#
+#   SECTION: Application
+#
+#   - This section defines the values to encode into a config transaction or
+#   genesis block for application related parameters
+#
+################################################################################
+Application: &ApplicationDefaults
+
+    # Organizations is the list of orgs which are defined as participants on
+    # the application side of the network
+    Organizations:
+
+    # Policies defines the set of policies at this level of the config tree
+    # For Application policies, their canonical path is
+    #   /Channel/Application/<PolicyName>
+    Policies: &ApplicationDefaultPolicies
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+################################################################################
+#
+#   SECTION: Capabilities
+################################################################################
+Capabilities:
+    # Channel capabilities apply to both the orderers and the peers and must be
+    # supported by both.  Set the value of the capability to true to require it.
+    Channel: &ChannelCapabilities
+        V1_1: true
+
+    # Orderer capabilities apply only to the orderers, and may be safely
+    # manipulated without concern for upgrading peers.  Set the value of the
+    # capability to true to require it.
+    Orderer: &OrdererCapabilities
+        V1_1: true
+
+    # Application capabilities apply only to the peer network, and may be
+    # safely manipulated without concern for upgrading orderers.  Set the value
+    # of the capability to true to require it.
+    Application: &ApplicationCapabilities
+        V1_2: true
+        V1_1: false
+################################################################################
+#
+#   CHANNEL
+#
+#   This section defines the values to encode into a config transaction or
+#   genesis block for channel related parameters.
+#
+################################################################################
+Channel: &ChannelDefaults
+    # Policies defines the set of policies at this level of the config tree
+    # For Channel policies, their canonical path is
+    #   /Channel/<PolicyName>
+    Policies:
+        # Who may invoke the 'Deliver' API
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        # Who may invoke the 'Broadcast' API
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        # By default, who may modify elements at this config level
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+
+
+    # Capabilities describes the channel level capabilities, see the
+    # dedicated Capabilities section elsewhere in this file for a full
+    # description
+    Capabilities:
+        <<: *ChannelCapabilities
+
+
+################################################################################
+#
+#   SECTION: Orderer
+#
+#   - This section defines the values to encode into a config transaction or
+#   genesis block for orderer related parameters
+#
+################################################################################
+Orderer: &OrdererDefaults
+
+    # Orderer Type: The orderer implementation to start
+    # Available types are "solo","kafka"  and "etcdraft"
+    OrdererType: etcdraft
+
+    # EtcdRaft defines configuration which must be set when the "etcdraft"
+    # orderertype is chosen.
+    EtcdRaft:
+        # The set of Raft replicas for this network. For the etcd/raft-based
+        # implementation, we expect every replica to also be an OSN. Therefore,
+        # a subset of the host:port items enumerated in this list should be
+        # replicated under the Orderer.Addresses key above.
+        Consenters:
+            - Host: orderer.example.com
+              Port: 7050
+              ClientTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.crt
+              ServerTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.crt
+
+################################################################################
+#
+#   Section: Organizations
+#
+#   - This section defines the different organizational identities which will
+#   be referenced later in the configuration.
+#
+################################################################################
+Organizations:
+
+    # OrdererOrg defines an MSP using the sampleconfig. It should never be used
+    # in production but may be used as a template for other definitions
+    - &OrdererOrg
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: OrdererMSP
+
+        # ID to load the MSP definition as
+        ID: OrdererMSP
+
+        # MSPDir is the filesystem path which contains the MSP configuration
+        MSPDir: crypto-config/ordererOrganizations/example.com/msp
+
+        # Policies defines the set of policies at this level of the config tree
+        # For organization policies, their canonical path is usually
+        #   /Channel/<Application|Orderer>/<OrgName>/<PolicyName>
+        Policies: &OrdererOrgPolicies
+            Readers:
+                Type: Signature
+                Rule: "OR('OrdererMSP.member')"
+                # If your MSP is configured with the new NodeOUs, you might
+                # want to use a more specific rule like the following:
+                # Rule: "OR('OrdererMSP.admin', 'OrdererMSP.peer', 'OrdererMSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('OrdererMSP.member')"
+                # If your MSP is configured with the new NodeOUs, you might
+                # want to use a more specific rule like the following:
+                # Rule: "OR('OrdererMSP.admin', 'OrdererMSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('OrdererMSP.admin')"
+    - &DigiBankPO
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: DigiBankPOMSP
+
+        # ID to load the MSP definition as
+        ID: DigiBankPOMSP
+
+        MSPDir: crypto-config/peerOrganizations/digi-bank-po.com/msp
+
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.  Note, this value is only
+            # encoded in the genesis block in the Application section context
+            - Host: peer0.digi-bank-po.com
+              Port: 7051
+
+        # Policies defines the set of policies at this level of the config tree
+        # For organization policies, their canonical path is usually
+        Policies: &DigiBankPOPolicies
+            Readers:
+                Type: Signature
+                Rule: "OR('DigiBankPOMSP.member')"
+            Writers:
+                Type: Signature
+                Rule: "OR('DigiBankPOMSP.member')"
+            Admins:
+                Type: Signature
+                Rule: "OR('DigiBankPOMSP.admin')"
+    - &DigiBankSP
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: DigiBankSPMSP
+
+        # ID to load the MSP definition as
+        ID: DigiBankSPMSP
+
+        MSPDir: crypto-config/peerOrganizations/digi-bank-sp.com/msp
+
+        # Policies defines the set of policies at this level of the config tree
+        # For organization policies, their canonical path is usually
+        Policies: &DigiBankSPPolicies
+            Readers:
+                Type: Signature
+                Rule: "OR('DigiBankSPMSP.member')"
+            Writers:
+                Type: Signature
+                Rule: "OR('DigiBankSPMSP.member')"
+            Admins:
+                Type: Signature
+                Rule: "OR('DigiBankSPMSP.admin')"
+    - &MagnetoCorpPO
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: MagnetoCorpPOMSP
+
+        # ID to load the MSP definition as
+        ID: MagnetoCorpPOMSP
+
+        MSPDir: crypto-config/peerOrganizations/magneto-corp-po.com/msp
+
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.  Note, this value is only
+            # encoded in the genesis block in the Application section context
+            - Host: peer0.magneto-corp-po.com
+              Port: 9051
+
+        # Policies defines the set of policies at this level of the config tree
+        # For organization policies, their canonical path is usually
+        Policies: &MagnetoCorpPOPolicies
+            Readers:
+                Type: Signature
+                Rule: "OR('MagnetoCorpPOMSP.member')"
+            Writers:
+                Type: Signature
+                Rule: "OR('MagnetoCorpPOMSP.member')"
+            Admins:
+                Type: Signature
+                Rule: "OR('MagnetoCorpPOMSP.admin')"
+    - &MagnetoCorpSP
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: MagnetoCorpSPMSP
+
+        # ID to load the MSP definition as
+        ID: MagnetoCorpSPMSP
+
+        MSPDir: crypto-config/peerOrganizations/magneto-corp-sp.com/msp
+
+        # Policies defines the set of policies at this level of the config tree
+        # For organization policies, their canonical path is usually
+        Policies: &MagnetoCorpSPPolicies
+            Readers:
+                Type: Signature
+                Rule: "OR('MagnetoCorpSPMSP.member')"
+            Writers:
+                Type: Signature
+                Rule: "OR('MagnetoCorpSPMSP.member')"
+            Admins:
+                Type: Signature
+                Rule: "OR('MagnetoCorpSPMSP.admin')"
+    - &HedgematicPO
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: HedgematicPOMSP
+
+        # ID to load the MSP definition as
+        ID: HedgematicPOMSP
+
+        MSPDir: crypto-config/peerOrganizations/hedgematic-po.com/msp
+
+        AnchorPeers:
+            # AnchorPeers defines the location of peers which can be used
+            # for cross org gossip communication.  Note, this value is only
+            # encoded in the genesis block in the Application section context
+            - Host: peer0.hedgematic-po.com
+              Port: 11051
+
+        # Policies defines the set of policies at this level of the config tree
+        # For organization policies, their canonical path is usually
+        Policies: &HedgematicPOPolicies
+            Readers:
+                Type: Signature
+                Rule: "OR('HedgematicPOMSP.member')"
+            Writers:
+                Type: Signature
+                Rule: "OR('HedgematicPOMSP.member')"
+            Admins:
+                Type: Signature
+                Rule: "OR('HedgematicPOMSP.admin')"
+    - &HedgematicSP
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: HedgematicSPMSP
+
+        # ID to load the MSP definition as
+        ID: HedgematicSPMSP
+
+        MSPDir: crypto-config/peerOrganizations/hedgematic-sp.com/msp
+
+        # Policies defines the set of policies at this level of the config tree
+        # For organization policies, their canonical path is usually
+        Policies: &HedgematicSPPolicies
+            Readers:
+                Type: Signature
+                Rule: "OR('HedgematicSPMSP.member')"
+            Writers:
+                Type: Signature
+                Rule: "OR('HedgematicSPMSP.member')"
+            Admins:
+                Type: Signature
+                Rule: "OR('HedgematicSPMSP.admin')"
+    - &EcoBankSP
+        # DefaultOrg defines the organization which is used in the sampleconfig
+        # of the fabric.git development environment
+        Name: EcoBankSPMSP
+
+        # ID to load the MSP definition as
+        ID: EcoBankSPMSP
+
+        MSPDir: crypto-config/peerOrganizations/eco-bank-sp.com/msp
+
+        # Policies defines the set of policies at this level of the config tree
+        # For organization policies, their canonical path is usually
+        Policies: &EcoBankSPPolicies
+            Readers:
+                Type: Signature
+                Rule: "OR('EcoBankSPMSP.member')"
+            Writers:
+                Type: Signature
+                Rule: "OR('EcoBankSPMSP.member')"
+            Admins:
+                Type: Signature
+                Rule: "OR('EcoBankSPMSP.admin')"
+
+################################################################################
+#
+#   Profile
+#
+#   - Different configuration profiles may be encoded here to be specified
+#   as parameters to the configtxgen tool
+#
+################################################################################
+Profiles:
+    TradenetGenesis:
+        <<: *ChannelDefaults
+        Capabilities:
+            <<: *ChannelCapabilities
+        Orderer:
+            <<: *OrdererDefaults
+            OrdererType: etcdraft
+            EtcdRaft:
+                Consenters:
+                  - Host: orderer.example.com
+                    Port: 7050
+                    ClientTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.crt
+                    ServerTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.crt
+            Addresses:
+                - orderer.example.com:7050
+            Organizations:
+            - *OrdererOrg
+            Capabilities:
+                <<: *OrdererCapabilities
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+            - <<: *OrdererOrg
+        Consortiums:
+            SampleConsortium:
+                Organizations:
+                - *DigiBankPO
+                - *MagnetoCorpPO
+                - *HedgematicPO
+                - *DigiBankSP
+                - *MagnetoCorpSP
+                - *HedgematicSP
+                - *EcoBankSP
+    TradenetPurchase:
+        <<: *ChannelDefaults
+        Consortium: SampleConsortium
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *DigiBankPO
+                - *MagnetoCorpPO
+                - *HedgematicPO
+                - *DigiBankSP
+                - *MagnetoCorpSP
+                - *HedgematicSP
+                - *EcoBankSP
+            Capabilities:
+                <<: *ApplicationCapabilities
+    TradenetFinance:
+        <<: *ChannelDefaults
+        Consortium: SampleConsortium
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *DigiBankPO
+                - *MagnetoCorpPO
+                - *HedgematicPO
+                - *DigiBankSP
+                - *MagnetoCorpSP
+                - *HedgematicSP
+                - *EcoBankSP
+            Capabilities:
+                <<: *ApplicationCapabilities

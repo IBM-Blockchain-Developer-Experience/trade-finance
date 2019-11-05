@@ -1,0 +1,16 @@
+{
+  "name": "cli",
+  "version": "1.0.0",
+  "description": "Trade Finance CLI monorepo",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "@microsoft/rush": "^5.14.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rush update && rush build"
+  },
+  "author": "Liam Grace & Andrew Hurt",
+  "license": "Apache-2.0"
+}
