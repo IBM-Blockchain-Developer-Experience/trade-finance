@@ -12,7 +12,7 @@ async function questionBuilder(dataStore: DataStore) {
 }
 
 async function run() {
-    console.log('Welcome to the Trade Finance Demo Service Provider CLI');
+    console.log('Welcome to the Service Provider CLI');
     const dataStore: DataStore = {
         auth: null,
     };
