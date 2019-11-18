@@ -11,7 +11,7 @@
 - python
 - make
 - g++
-- [blockchain-node-generator@1.0.0](https://github.com/liam-grace/blockchain-node-generator) (optional)
+- [blockchain-node-generator@1.0.3](https://github.com/liam-grace/blockchain-node-generator) (optional)
 
 ## Setting up the demo
 
