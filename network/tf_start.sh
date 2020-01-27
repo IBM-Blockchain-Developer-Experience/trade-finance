@@ -31,6 +31,9 @@ bash $NETWORK/network_start.sh
 echo "###################"
 echo "# START CHAINCODE #"
 echo "###################"
+
+set +e
+
 CHAINCODE_FOLDER=$MODULEDIR/contracts
 echo "Instantiating Purchase Order Contract..."
 bash $NETWORK/scripts/install_and_instantiate.sh -t instantiate -l java -d $CHAINCODE_FOLDER/purchase_order_contract -p "OR('DigiBankPOMSP.member', 'MagnetoCorpPOMSP.member', 'HedgematicPOMSP.member')" -n purchasecontract -c tradenetpurchase > $BASEDIR/tmp/purchasecontract_startup.log 2>&1 &
@@ -40,6 +43,8 @@ start_spinner  "Instantiating Finance Request Contract..."
 bash $NETWORK/scripts/install_and_instantiate.sh -t instantiate -l java -d $CHAINCODE_FOLDER/finance_contract -p "OR('DigiBankPOMSP.member', 'MagnetoCorpPOMSP.member', 'HedgematicPOMSP.member')" -n financecontract -c tradenetfinance > $BASEDIR/tmp/financecontract_startup.log 2>&1 &
 FINANCE_INSTANTIATE_ID=$!
 
+set -e
+
 if wait $PURCHASE_INSTANTIATE_ID && wait $FINANCE_INSTANTIATE_ID; then
     PURCHASE_INSTANTIATE_EXIT=$?
     FINANCE_INSTANTIATE_EXIT=$?
@@ -48,11 +53,6 @@ if wait $PURCHASE_INSTANTIATE_ID && wait $FINANCE_INSTANTIATE_ID; then
     echo "Finance Request contract instantiated"
 else
     stop_spinner 1
-    exit 1
-fi
-
-if [ "$PURCHASE_INSTANTIATE_EXIT" != 0 ] || [ "$FINANCE_INSTANTIATE_EXIT" != 0 ]
-then
     echo "Failed to instantiate chaincode. Processes exited with:"
     echo "Purchase contract: $PURCHASE_INSTANTIATE_EXIT"
     echo "Finance contract: $FINANCE_INSTANTIATE_EXIT"
