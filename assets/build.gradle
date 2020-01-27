@@ -24,7 +24,7 @@ repositories {
 }
 
 dependencies {
-    compile group: 'org.hyperledger.fabric-chaincode-java', name: 'fabric-chaincode-shim', version: '1.4.4-SNAPSHOT'
+    compile group: 'org.hyperledger.fabric-chaincode-java', name: 'fabric-chaincode-shim', version: '1.4.5'
     implementation project(':ledger-api')
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.4.2'
